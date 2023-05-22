@@ -1,0 +1,79 @@
+.container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 15px;
+  padding: 0 1rem;
+}
+
+.news {
+  display: grid;
+  grid-template-rows: auto 1fr auto; /* Ajustamos las filas */
+  background-color: white;
+  padding: 20px;
+  border-radius: 4px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.title {
+  color: #8c72cc;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.author {
+  text-align: center;
+  align-self: end; /* Alineamos al final */
+}
+
+.date {
+  text-align: center;
+  align-self: end; /* Alineamos al final */
+}
+
+.button {
+  display: block;
+  margin-top: 10px;
+  background-color: #8c72cc;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  border-radius: 4px;
+  text-decoration: none;
+  align-self: end; /* Alineamos al final */
+}
+
+.button:hover {
+  background-color: #6b519f;
+}
+
+.no-news {
+  text-align: center;
+  color: #8c72cc;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+h1 {
+  color: #8c72cc;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.dark-mode .news {
+  background-color: #1c0c3e;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+
+@media (min-width: 769px) and (max-width: 992px) {
+  .container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

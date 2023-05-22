@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Usuario</title>
+  <style>
+    .edit-form {
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 50%;
+      text-align: center;
+    }
+
+    .form-title {
+      font-size: 24px;
+      color: #8c72cc;
+      margin-bottom: 10px;
+    }
+
+    .form-field {
+      margin-bottom: 10px;
+    }
+
+    .form-label {
+      display: block;
+      text-align: left;
+      font-size: 16px;
+      color: #8c72cc;
+      margin-bottom: 5px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    .checkbox-field {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .checkbox-input {
+      margin-right: 5px;
+    }
+
+    .form-submit {
+      background-color: #8c72cc;
+      color: #ffffff;
+      font-size: 16px;
+      padding: 10px 20px;
+      border-radius: 4px;
+      text-decoration: none;
+      margin-right: 10px;
+      border: none;
+    }
+
+    .form-submit:hover {
+      background-color: #6b519f;
+    }
+
+    .cancel-link {
+      color: #8c72cc;
+      font-size: 16px;
+      text-decoration: none;
+    }
+
+    .cancel-link:hover {
+      text-decoration: underline;
+    }
+
+    .dark-mode .edit-form {
+			background-color: #1c0c3e;
+      color: white;
+		}
+
+    .dark-mode .edit-form form input:not(.edit-form form input[type="submit"]) {
+      background-color: #645883;
+      border: none;
+      color: white;
+		}
+
+    @media (max-width: 768px) {
+			.edit-form {
+				max-width: 90%;
+			}
+		}
+
+		@media (min-width: 769px) and (max-width: 992px) {
+			.edit-form {
+				max-width: 80%;
+			}
+		}
+  </style>
+</head>
+
+<body>
+  <%- include('../partials/header_editUser') %>
+
+    <div class="edit-form">
+      <h1 class="form-title">Editar Usuario</h1>
+      <form action="/edit/<%= user._id %>" method="POST">
+        <div class="form-field">
+          <label class="form-label" for="name">Nombre:</label>
+          <input class="form-input" type="text" id="name" name="name" value="<%= user.name %>" required>
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="email">Correo:</label>
+          <input class="form-input" type="email" id="email" name="email" value="<%= user.email %>" required>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Roles:</label>
+          <% const roles=['usuario', 'editor' , 'admin' ]; %>
+            <% for (let i=0; i < roles.length; i++) { %>
+              <div class="checkbox-field">
+                <input class="checkbox-input" type="checkbox" id="<%= roles[i] %>" name="roles" value="<%= roles[i] %>"
+                  <% if (user.roles.includes(roles[i])) { %> checked <% } %>>
+                  <label for="<%= roles[i] %>">
+                    <%= roles[i] %>
+                  </label>
+              </div>
+              <% } %>
+        </div>
+        <div class="form-field">
+          <input class="form-submit" type="submit" value="Guardar">
+          <a class="cancel-link" href="javascript:history.back()">Cancelar</a>
+        </div>
+      </form>
+    </div>
+</body>
+
+</html>

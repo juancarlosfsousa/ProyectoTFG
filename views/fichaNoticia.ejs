@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ficha de Noticia</title>
+</head>
+<style>
+  .news-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 60%;
+  }
+
+  .news-title {
+    font-size: 24px;
+    color: #8c72cc;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .news-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .news-author {
+    font-size: 16px;
+    color: #8c72cc;
+    margin-right: 10px;
+  }
+
+  .news-date {
+    font-size: 16px;
+    color: #8c72cc;
+  }
+
+  .news-content {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .back-button-container {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .back-button {
+    background-color: #8c72cc;
+    color: #ffffff;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+  }
+
+  .back-button:hover {
+    background-color: #6b519f;
+  }
+
+  .dark-mode .news-card {
+    background-color: #1c0c3e;
+    color: white;
+  }
+
+  @media (max-width: 768px) {
+    .news-card {
+      max-width: 90%;
+    }
+  }
+
+
+  @media (min-width: 769px) and (max-width: 992px) {
+    .news-card {
+      max-width: 80%;
+    }
+  }
+</style>
+
+<%- include('../partials/header') %>
+
+  <body>
+    <div class="news-card">
+      <h1 class="news-title">
+        <%= noticia.titulo %>
+      </h1>
+      <div class="news-info">
+        <p class="news-author">Autor: <%= noticia.autor ? noticia.autor.name : 'Autor desconocido' %>
+        </p> |&nbsp;
+        <p class="news-date">
+          <%= noticia.fechaCreacion ? noticia.fechaCreacion.toLocaleDateString('es-ES',{ hour: '2-digit' ,
+            minute: '2-digit' }) : 'Fecha desconocida' %>
+        </p>
+      </div>
+      <p class="news-content">
+        <%= noticia.contenido %>
+      </p>
+      <div class="back-button-container">
+        <a href="javascript:history.back()" class="back-button">Volver</a>
+      </div>
+    </div>
+  </body>
+
+</html>

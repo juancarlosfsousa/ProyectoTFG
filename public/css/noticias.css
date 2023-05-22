@@ -1,0 +1,117 @@
+.container {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  background: linear-gradient(to bottom, #6b519f, #3a1b7a);
+  padding: 1rem 0;
+}
+
+.news-container {
+  flex: 1;
+  max-width: 350px;
+  margin-right: 2rem;
+}
+
+.news {
+  background-color: #f2f2f2;
+}
+
+.title-container {
+  padding: 3rem 0.5rem;
+  margin: 0;
+  background: radial-gradient(circle, #8c72cc, #000000);
+}
+
+.title {
+  width: 100%;
+  font-size: 24px;
+  padding: 1rem 0;
+  margin: 0;
+  color: white;
+}
+
+.author,
+.date {
+  font-size: 14px;
+  margin: 2.5rem 0;
+  text-align: center;
+}
+
+.date {
+  padding-bottom: 1rem;
+}
+
+.button {
+  display: block;
+  text-align: center;
+  margin: 0.5rem auto;
+  width: 50%;
+  padding: 0.5rem 0;
+  background-color: #8c72cc;
+  color: white;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.button:hover {
+  background-color: #6b519f;
+}
+
+.dark-mode .news {
+  background-color: #1c0c3e;
+  color: white;
+}
+
+.dark-mode .button {
+  background-color: #6b519f;
+}
+
+.dark-mode .button:hover {
+  background-color: #493179;
+}
+
+.ver-mas-container {
+  display: flex;
+  justify-content: center;
+  background-color: #361d75;
+}
+
+.ver-mas-button {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: #8c72cc;
+  color: white;
+  border-radius: 4px;
+  font-size: 16px;
+  text-decoration: none;
+  margin-bottom: 1rem;
+}
+
+.ver-mas-button:hover {
+  background-color: #6b519f;
+}
+
+.dark-mode .ver-mas-button {
+  background-color: #6b519f;
+}
+
+.dark-mode .ver-mas-button:hover {
+  background-color: #493179;
+}
+
+@media screen and (max-width: 768px) {
+  .container {
+    display: block;
+    margin: 0 auto;
+  }
+
+  .news-container {
+    margin: 1rem auto;
+  }
+
+  .button {
+    width: 80%;
+  }
+
+}

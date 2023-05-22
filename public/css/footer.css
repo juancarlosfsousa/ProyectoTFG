@@ -1,0 +1,90 @@
+footer {
+  width: 100%;
+  height: 30vh;
+  background-color: white; /* Color blanco para el fondo del footer */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footercontent {
+  width: 60%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap; /* Para que los elementos se envuelvan en una nueva línea si no caben en una sola fila */
+  padding: 20px 0;
+  gap: 10px; /* Espacio entre los elementos */
+}
+
+.text-section {
+  text-align: center;
+  flex-basis: 100%; /* Ancho completo para la sección de texto */
+  margin-bottom: 1rem;
+}
+
+.text-section p {
+  margin: 1rem 2rem;
+  display: inline;
+}
+
+.icon-section {
+  text-align: center;
+  flex-basis: 100%; /* Ancho completo para la sección de íconos */
+}
+
+.icon-section a {
+  display: inline-block;
+  margin: 0 2rem;
+  font-size: 24px; /* Aumenta el tamaño de los íconos */
+  color: #000000;
+  border-radius: 50%; /* Hace los íconos redondos */
+  background-color: #d6c6ff; /* Puedes cambiar el color de fondo según tus preferencias */
+  padding: 8px 12px; /* Añade un poco de espacio alrededor de los íconos */
+  transition: background-color 0.3s ease; /* Agrega una transición suave para el cambio de color de fondo */
+}
+
+.icon-section a:hover {
+  background-color: #ad98e3; /* Cambia el color de fondo en el hover */
+}
+
+.dark-mode footer{
+  background-color: #1c0c3e;
+}
+
+.dark-mode .text-section p {
+  color: white;
+}
+
+.dark-mode .icon-section a {
+  background-color: #ad98e3;
+}
+
+.dark-mode .icon-section a:hover {
+  background-color: #876dc9;
+}
+
+@media (max-width: 768px) { /* Ajusta el valor del ancho según tus necesidades */
+  .footercontent {
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan en varias líneas */
+  }
+
+  .text-section {
+    flex-basis: 100%; /* Ancho completo para la sección de texto */
+    display: flex; /* Cambia a flex para alinear los textos en una fila */
+    justify-content: center; /* Centra los textos horizontalmente */
+    margin-bottom: 1rem; /* Agrega un margen inferior para separar de los íconos */
+  }
+
+  .text-section p {
+    flex: 1; /* Permite que los textos se expandan para ocupar el ancho disponible */
+    margin: 0 1.5rem; /* Ajusta los márgenes laterales */
+  }
+
+  .icon-section {
+    flex-basis: 100%; /* Ancho completo para la sección de íconos */
+    display: flex; /* Cambia a flex para alinear los íconos en una fila */
+    justify-content: center; /* Centra los íconos horizontalmente */
+  }
+}

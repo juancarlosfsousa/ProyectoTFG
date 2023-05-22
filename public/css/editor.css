@@ -1,0 +1,104 @@
+.container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 15px;
+  padding: 0 1rem;
+}
+
+.admin {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background-color: white;
+  padding: 20px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.name {
+  color: #8c72cc;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.email,
+.roles {
+  text-align: center;
+  align-self: end;
+}
+
+.actions-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.button {
+  margin-top: 1rem;
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+  border: none;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.edit-button {
+  margin-right: 10px;
+  background-color: #8c72cc;
+}
+
+.edit-button:hover {
+  background-color: #6b519f;
+}
+
+.delete-button {
+  margin-right: 10px;
+  background-color: #ff0000;
+}
+
+.delete-button:hover {
+  background-color: #a80000;
+}
+
+.dark-mode .admin {
+  background-color: #1c0c3e;
+  color: white;
+}
+
+h1 {
+  color: #8c72cc;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.create-link {
+  margin: 1rem;
+  background-color: #0095ff;
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  display: inline-block;
+}
+
+.create-link:hover {
+  background-color: #006ebc;
+}
+
+.create-link i {
+  margin-right: 5px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+
+@media (min-width: 769px) and (max-width: 992px) {
+  .container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+} 

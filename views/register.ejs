@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Register</title>
+	<style>
+		.cuadro {
+			background-color: #ffffff;
+			border-radius: 8px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			padding: 20px;
+			margin: 20px auto;
+			max-width: 50%;
+			text-align: center;
+		}
+
+		#formulario {
+			margin-bottom: 20px;
+		}
+
+		#textologin {
+			font-size: 24px;
+			color: #8c72cc;
+			margin-bottom: 10px;
+		}
+
+		label {
+			display: block;
+			font-size: 16px;
+			color: #8c72cc;
+			margin-bottom: 5px;
+			text-align: left;
+		}
+
+		input[type="email"],
+		input[type="text"],
+		input[type="password"] {
+			width: 100%;
+			padding: 8px;
+			border-radius: 4px;
+			border: 1px solid #ccc;
+			margin-bottom: 10px;
+		}
+
+		#enviar {
+			background-color: #8c72cc;
+			color: #ffffff;
+			font-size: 16px;
+			padding: 10px 20px;
+			border-radius: 4px;
+			text-decoration: none;
+			cursor: pointer;
+			border: none;
+		}
+
+		#enviar:hover {
+			background-color: #6b519f;
+		}
+
+		.registro {
+			font-size: 16px;
+			margin-top: 20px;
+		}
+
+		.text-info {
+			color: #8c72cc;
+			text-decoration: none;
+		}
+
+		.text-info:hover {
+			text-decoration: underline;
+		}
+
+		.dark-mode .cuadro {
+			background-color: #1c0c3e;
+			color: white;
+		}
+
+		.dark-mode .cuadro form input:not(.formulario form input[type="submit"]) {
+			background-color: #645883;
+			border: none;
+			color: white;
+		}
+
+		.dark-mode #enviar {
+			background-color: #6b519f;
+		}
+
+		.dark-mode #enviar:hover {
+			background-color: #533b83;
+		}
+	</style>
+</head>
+
+<body>
+	<%- include('../partials/header') %>
+		<div class="cuadro">
+			<div id="formulario">
+				<p id="textologin">REGISTER</p>
+				<form action="/register" method="POST">
+					<label for="email">Email:</label>
+					<input type="email" id="email" name="email" placeholder="Email" required autofocus>
+					<label for="name">Nombre:</label>
+					<input type="text" name="name" placeholder="Nombre" required />
+					<label for="passsword">Contraseña:</label>
+					<input type="password" name="password" placeholder="Contraseña" required />
+					<input type="submit" value="Registrarse" id="enviar">
+				</form>
+			</div>
+
+			<p class="registro">¿Ya tienes cuenta? <a href="/login" class="text-info">Inicia sesión</a></p>
+		</div>
+</body>
+
+</html>

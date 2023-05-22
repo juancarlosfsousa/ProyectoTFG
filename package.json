@@ -1,0 +1,30 @@
+{
+  "name": "proyecto",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Juan Carlos Fernández",
+  "license": "ISC",
+  "dependencies": {
+    "@fullcalendar/core": "^6.1.6",
+    "@fullcalendar/daygrid": "^6.1.6",
+    "@fullcalendar/interaction": "^6.1.6",
+    "@fullcalendar/timegrid": "^6.1.6",
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.2",
+    "connect-mongodb-session": "^3.1.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "fullcalendar": "^6.1.6",
+    "method-override": "^3.0.0",
+    "moment": "^2.29.4",
+    "mongodb": "^4.4.0",
+    "mongoose": "^7.0.4",
+    "nodemon": "^2.0.22",
+    "path": "^0.12.7"
+  }
+}
