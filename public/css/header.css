@@ -10,11 +10,11 @@ header {
 }
 
 .logo {
-  padding-left: 5rem;
+  padding-left: 5vw;
 }
 
 .logo img {
-  max-width: 9%;
+  max-width: 6%;
   padding: 0.5rem;
 }
 
@@ -72,6 +72,11 @@ nav ul li a:hover {
     padding-left: 1rem;
   }
 
+  .logo img {
+    min-width: 16%;
+    padding: 0.5rem;
+  }
+
   .menu-toggle {
     display: block;
   }
@@ -115,6 +120,13 @@ nav ul li a:hover {
   }
   nav {
     display: flex !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+  .logo img {
+    max-width: 20%;
+    padding: 0.5rem;
   }
 }
 
