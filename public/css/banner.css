@@ -36,6 +36,10 @@
   object-fit: contain; /* Para ajustar la imagen dentro del contenedor sin distorsión */
 }
 
+.underline {
+  text-decoration: underline;
+}
+
 @media screen and (max-width: 768px) {
   .banner {
     flex-direction: column;
