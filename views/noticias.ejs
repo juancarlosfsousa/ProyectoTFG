@@ -17,6 +17,8 @@
       <div class="container">
         <% noticias.forEach(function(noticia) { %>
           <div class="news">
+            <div class="title-container" style="background-image: url('/../public<%= noticia.imagen %>')">
+            </div>
             <h2 class="title">
               <%= noticia.titulo %>
             </h2>
@@ -24,8 +26,8 @@
               <%= noticia.autor ? noticia.autor.name : 'Autor desconocido' %>
             </p>
             <p class="date">
-              <%= noticia.fechaCreacion ? noticia.fechaCreacion.toLocaleDateString('es-ES', {timeZone: 'Europe/Madrid', hour: '2-digit' ,
-                minute: '2-digit' }) : 'Fecha desconocida' %>
+              <%= noticia.fechaCreacion ? noticia.fechaCreacion.toLocaleDateString('es-ES', {timeZone: 'Europe/Madrid' ,
+                hour: '2-digit' , minute: '2-digit' }) : 'Fecha desconocida' %>
             </p>
             <a href="/noticias/<%= noticia._id %>" class="button">Abrir Noticia</a>
           </div>

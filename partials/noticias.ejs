@@ -6,11 +6,12 @@
       <% for (let j=i; j < i + 3 && j < noticias.length; j++) { %>
         <div class="news-container">
           <div class="news">
-            <div class="title-container">
-              <h2 class="title">
-                <%= noticias[j].titulo %>
-              </h2>
+            <div class="title-container" style="background-image: url('/../public<%= noticias[j].imagen %>');">
+
             </div>
+            <h2 class="title">
+              <%= noticias[j].titulo %>
+            </h2>
             <p class="author">
               <%= noticias[j].autor ? noticias[j].autor.name : 'Autor desconocido' %>
             </p>

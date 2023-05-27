@@ -28,7 +28,7 @@
           Autor: <%= noticia.autor ? noticia.autor.name : 'Autor desconocido' %>
         </p>
         <p class="roles">
-          Fecha creación: <%= noticia.fechaCreacion ? noticia.fechaCreacion.toLocaleDateString('es-ES', { hour: '2-digit', minute: '2-digit' }) : 'Fecha desconocida' %>
+          Creación: <%= noticia.fechaCreacion ? noticia.fechaCreacion.toLocaleDateString('es-ES', { hour: '2-digit', minute: '2-digit' }) : 'Fecha desconocida' %>
         </p>
         <div class="actions-container">
           <a href="/noticias/<%= noticia._id %>/editar" class="button edit-button"><i class="fa-solid fa-user-pen"></i></a>

@@ -29,9 +29,44 @@ cron.schedule('*/5 * * * *', async () => {
   }
 });
 
-
 // Iniciar el servidor
 app.listen(3000, () => console.log('Servidor iniciado en http://127.0.0.1:3000'));
+
+
+
+
+
+const multer = require('multer');
+
+// Configurar el almacenamiento y el nombre de los archivos
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/uploads'); // Directorio donde se guardarán las imágenes
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const extension = file.originalname.split('.').pop();
+    cb(null, file.fieldname + '-' + uniqueSuffix + '.' + extension);
+  }
+});
+
+// Crear una instancia de multer con la configuración de almacenamiento
+const upload = multer({ storage: storage });
+
+// Ruta para manejar la carga de archivos
+app.post('/upload', upload.single('imagen'), (req, res) => {
+  if (req.file) {
+    const imageUrl = '/uploads/' + req.file.filename;
+    // Realiza las acciones necesarias con la URL de la imagen (por ejemplo, guardarla en la base de datos)
+    res.send('Archivo subido correctamente: ' + imageUrl);
+  } else {
+    res.status(400).send('No se ha proporcionado ningún archivo');
+  }
+});
+
+
+
+
 
 
 //Autentificación
@@ -473,6 +508,7 @@ app.post('/eventos/:id/borrar', checkEditorRole, (req, res) => {
 const NoticiaSchema = new mongoose.Schema({
 	titulo: String,
 	contenido: String,
+	imagen: String,
 	fechaCreacion: {
 		type: Date,
 		default: Date.now
@@ -484,13 +520,18 @@ const NoticiaSchema = new mongoose.Schema({
 });
 const Noticia = mongoose.model('Noticia', NoticiaSchema);
 
-app.post('/noticias', async (req, res) => {
+app.post('/noticias', upload.single('imagen'), async (req, res) => {
 	const { titulo, contenido } = req.body;
 	const autor = req.session.userId; // Obtener el ID del usuario logeado desde la sesión
+	const imagen = req.file ? '/uploads/' + req.file.filename : '/uploads/prueba.gif';
+
+
+
 	try {
 		const nuevaNoticia = new Noticia({
 			titulo,
 			contenido,
+			imagen,
 			autor // Establece la ID del usuario como referencia
 		});
 		await nuevaNoticia.save();
