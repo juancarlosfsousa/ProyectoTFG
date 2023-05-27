@@ -1,33 +1,38 @@
 <link rel="stylesheet" href="../public/css/noticias.css">
 
-<% for (let i=0; i < noticias.length; i +=3) { %>
-  <div class="container">
-    <% for (let j=i; j < i + 3 && j < noticias.length; j++) { %>
-      <div class="news-container">
-        <div class="news">
-          <div class="title-container">
-            <h2 class="title">
-              <%= noticias[j].titulo %>
-            </h2>
+<% if (noticias.length> 0) { %>
+  <% for (let i=0; i < noticias.length; i +=3) { %>
+    <div class="container">
+      <% for (let j=i; j < i + 3 && j < noticias.length; j++) { %>
+        <div class="news-container">
+          <div class="news">
+            <div class="title-container">
+              <h2 class="title">
+                <%= noticias[j].titulo %>
+              </h2>
+            </div>
+            <p class="author">
+              <%= noticias[j].autor ? noticias[j].autor.name : 'Autor desconocido' %>
+            </p>
+            <p class="date">
+              <%= noticias[j].fechaCreacion ?
+                noticias[j].fechaCreacion.toLocaleDateString('es-ES',{timeZone: 'Europe/Madrid' , hour: '2-digit' ,
+                minute: '2-digit' }) : 'Fecha desconocida' %>
+            </p>
+            <% if (noticias[j].titulo && noticias[j].titulo !=="No se ha encontrado ninguna noticia" ) { %>
+              <a href="/noticias/<%= noticias[j]._id %>" class="button">Abrir Noticia</a><br>
+              <% } %>
           </div>
-          <p class="author">
-            <%= noticias[j].autor ? noticias[j].autor.name : 'Autor desconocido' %>
-          </p>
-          <p class="date">
-            <%= noticias[j].fechaCreacion ? noticias[j].fechaCreacion.toLocaleDateString('es-ES',{timeZone: 'Europe/Madrid', hour: '2-digit' ,
-              minute: '2-digit' }) : 'Fecha desconocida' %>
-          </p>
-          <% if (noticias[j].titulo && noticias[j].titulo !=="No se ha encontrado ninguna noticia" ) { %>
-            <a href="/noticias/<%= noticias[j]._id %>" class="button">Abrir Noticia</a><br>
-            <% } %>
         </div>
-      </div>
-      <% } %>
-  </div>
-<% } %>
+        <% } %>
+    </div>
+    <% } %>
+      <% } else { %>
+        <p class="no-news">No se ha encontrado ninguna noticia</p>
+        <% } %>
 
-<% if (noticias.length > 0) { %>
-  <div class="ver-mas-container">
-    <a href="/noticias" class="ver-mas-button">Ver noticias</a>
-  </div>
-<% } %>
+          <% if (noticias.length> 0) { %>
+            <div class="ver-mas-container">
+              <a href="/noticias" class="ver-mas-button">Ver noticias</a>
+            </div>
+            <% } %>

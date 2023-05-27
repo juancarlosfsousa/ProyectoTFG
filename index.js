@@ -126,11 +126,7 @@ app.get('/', async function (req, res) {
       .populate('autor', 'name')
       .sort({ fechaCreacion: -1 })
       .limit(3);
-    if (noticias.length === 0) {
-      for (let i = 0; i < 3; i++) {
-        noticias.push({ titulo: "No se ha encontrado ninguna noticia" });
-      }
-    }
+
     noticias.splice(3); // Para solo pasar 3 noticias
 		const events = (await Evento.find({}).sort({ start: 1 })); // Ordenar por fecha de inicio ascendente
 		events.splice(3);
@@ -145,10 +141,6 @@ app.get('/', async function (req, res) {
     res.render('index', { noticias, events: formattedEvents});
   }
 );
-
-app.get('/calendario', async function (req, res) {
-	res.render('calendario');
-});
 
 app.get('/login', async function (req, res) {
 	const userId = req.session.userId;
@@ -354,7 +346,7 @@ app.post('/eventosjson', (req, res) => {
 		end: end
 	});
 	nuevoEvento.save()
-		.then(() => res.redirect("/calendario"))
+		.then(() => res.redirect("/editor"))
 		.catch((err) => res.status(500).send('Error al crear el evento', err));
 });
 

@@ -100,6 +100,13 @@
   background-color: #493179;
 }
 
+.no-news {
+  text-align: center;
+  color: #8c72cc;
+  font-weight: bold;
+  margin: 1rem 0 3rem 0;
+}
+
 @media screen and (max-width: 768px) {
   .container {
     display: block;
@@ -113,5 +120,13 @@
   .button {
     width: 80%;
   }
+}
 
+@media (min-width: 769px) and (max-width: 992px) {
+  .container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 15px;
+    padding: 1rem 1rem;
+  }
 }
