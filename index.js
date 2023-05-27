@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const fullcalendar = require('fullcalendar');
 const moment = require('moment');
 var path = require('path')
+const cron = require('node-cron');
 
 // Crear una instancia de la aplicación
 const app = express();
@@ -16,6 +17,18 @@ app.use(bodyParser.urlencoded({
 	extended: false
 }));
 app.use(bodyParser.json());
+
+
+// Ejecutar el cron job cada 5 minutos
+cron.schedule('*/5 * * * *', async () => {
+  try {
+    const currentDate = new Date();
+    await Evento.deleteMany({ end: { $lt: currentDate } });
+  } catch (err) {
+    console.error('Error al eliminar los eventos automáticamente', err);
+  }
+});
+
 
 // Iniciar el servidor
 app.listen(3000, () => console.log('Servidor iniciado en http://127.0.0.1:3000'));
@@ -382,6 +395,11 @@ app.get('/eventos/crear', checkEditorRole, (req, res) => {
 
 app.post('/eventos/crear', checkEditorRole, (req, res) => {
 	const { title, start, end } = req.body;
+	const currentDate = new Date();
+
+  if (new Date(start) < currentDate) {
+    return res.status(400).send('La fecha de inicio no puede ser anterior a la fecha actual');
+  }
 
 	if (moment(end).isBefore(start)) {
     return res.status(400).send('La fecha de finalización debe ser posterior a la fecha de inicio');
@@ -423,6 +441,11 @@ app.get('/eventos/:id/editar', checkEditorRole, async (req, res) => {
 app.post('/eventos/:id/actualizar', checkEditorRole, (req, res) => {
 	const eventId = req.params.id;
 	const { title, start, end } = req.body;
+	const currentDate = new Date();
+
+  if (new Date(start) < currentDate) {
+    return res.status(400).send('La fecha de inicio no puede ser anterior a la fecha actual');
+  }
 
 	if (moment(end).isBefore(start)) {
     return res.status(400).send('La fecha de finalización debe ser posterior a la fecha de inicio');
