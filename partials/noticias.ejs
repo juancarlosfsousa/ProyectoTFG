@@ -14,7 +14,7 @@
             <%= noticias[j].autor ? noticias[j].autor.name : 'Autor desconocido' %>
           </p>
           <p class="date">
-            <%= noticias[j].fechaCreacion ? noticias[j].fechaCreacion.toLocaleDateString('es-ES',{ hour: '2-digit' ,
+            <%= noticias[j].fechaCreacion ? noticias[j].fechaCreacion.toLocaleDateString('es-ES',{timeZone: 'Europe/Madrid', hour: '2-digit' ,
               minute: '2-digit' }) : 'Fecha desconocida' %>
           </p>
           <% if (noticias[j].titulo && noticias[j].titulo !=="No se ha encontrado ninguna noticia" ) { %>

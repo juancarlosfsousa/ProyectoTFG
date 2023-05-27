@@ -24,7 +24,7 @@
               <%= noticia.autor ? noticia.autor.name : 'Autor desconocido' %>
             </p>
             <p class="date">
-              <%= noticia.fechaCreacion ? noticia.fechaCreacion.toLocaleDateString('es-ES', { hour: '2-digit' ,
+              <%= noticia.fechaCreacion ? noticia.fechaCreacion.toLocaleDateString('es-ES', {timeZone: 'Europe/Madrid', hour: '2-digit' ,
                 minute: '2-digit' }) : 'Fecha desconocida' %>
             </p>
             <a href="/noticias/<%= noticia._id %>" class="button">Abrir Noticia</a>
