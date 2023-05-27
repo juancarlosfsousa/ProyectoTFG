@@ -64,7 +64,6 @@
       initialView: 'dayGridMonth',
       events: '/eventosjson',
       locale: 'es',
-      timeZone: 'Europe/Madrid',
       firstDay: 1,
       buttonText: {
         today: 'Hoy'
@@ -77,7 +76,6 @@
       showNonCurrentDates: false,
       fixedWeekCount: false,
       eventClick: function (info) {
-        // Mostrar los detalles del evento en un lightbox
 
         // Crear el contenido del lightbox
         var lightboxContent = '<h2>' + info.event.title + '</h2>' +
