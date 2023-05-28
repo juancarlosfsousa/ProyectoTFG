@@ -400,10 +400,13 @@
     background: linear-gradient(to bottom, #6b519f, #3a1b7a);
     padding: 1rem 0;
   }
-  
+
   .news-container {
     flex: 1;
     max-width: 350px;
+  }
+  
+  .news-container:not(.news-container:last-of-type) {
     margin-right: 2rem;
   }
   
@@ -518,5 +521,9 @@
       grid-template-columns: repeat(3, 1fr);
       grid-gap: 15px;
       padding: 1rem 1rem;
+    }
+
+    .news-container:not(.news-container:last-of-type) {
+      margin-right: 1rem;
     }
   }
