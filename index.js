@@ -405,25 +405,6 @@ app.get('/eventosjson', (req, res) => {
 		.catch((err) => res.status(500).send('Error al obtener los eventos', err));
 });
 
-app.get('/eventos', async (req, res) => { //añadir async
-	// Obtener eventos de MongoDB y realizar el formateo de fechas y horas
-	try {
-		const events = await Evento.find({})
-			.sort({ start: 1 }); // Ordenar por fecha de inicio ascendente
-
-		const formattedEvents = events.map(event => ({
-			id: event._id,// Agregar la ID del evento
-			title: event.title,
-			formattedStart: moment(event.start).format("DD/MM/YYYY HH:mm"),
-			formattedEnd: moment(event.end).format("DD/MM/YYYY HH:mm")
-		}));
-		// Renderizar la vista con los eventos formateados
-		res.render('eventos', { events: formattedEvents });
-	} catch (err) {
-		res.status(500).send('Error al obtener los eventos: ' + err);
-	}
-});
-
 app.get('/eventos/crear', checkEditorRole, (req, res) => {
 	res.render('crearEvento');
 });
