@@ -241,7 +241,6 @@
   #calendariotexto {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    height: 80vh;
     background-color: white;
     overflow: hidden;
   }
@@ -264,8 +263,7 @@
   
   #texto p {
     line-height: 1.5;
-    margin-bottom: 1rem;
-  
+    margin-bottom: 1rem;  
   }
   
   #calendario{
@@ -390,6 +388,12 @@
     }
   }
 
+  @media (min-width: 993px) and (max-width: 1200px) {
+    #texto {
+      padding: 0.8rem;
+    }
+  }
+
 
   /* Noticias */
   .container {
@@ -504,6 +508,10 @@
     .container {
       display: block;
       margin: 0 auto;
+    }
+
+    .news-container:not(.news-container:last-of-type) {
+      margin-right: auto;
     }
   
     .news-container {

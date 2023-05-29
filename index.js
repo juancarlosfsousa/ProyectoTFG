@@ -197,29 +197,30 @@ app.get('/login', async function (req, res) {
 });
 
 app.post('/login', async function (req, res) {
-	const email = req.body.email;
-	const password = req.body.password;
+  const email = req.body.email.toLowerCase(); // Convertir a minúsculas
+  const password = req.body.password;
 
-	const client = await MongoClient.connect('mongodb://127.0.0.1:27017');
-	const db = client.db('proyecto');
-	const users = db.collection('users');
-	const user = await users.findOne({ email: email });
+  const client = await MongoClient.connect('mongodb://127.0.0.1:27017');
+  const db = client.db('proyecto');
+  const users = db.collection('users');
+  const user = await users.findOne({ email: email });
 
-	if (!user) {
-		res.send('Invalid email or password');
-	} else {
-		const result = await bcrypt.compare(password, user.password);
+  if (!user) {
+    res.send('Invalid email or password');
+  } else {
+    const result = await bcrypt.compare(password, user.password);
 
-		if (result === true) {
-			req.session.userId = user._id;
-			req.session.user = user;
-			res.redirect('/perfil');
-		} else {
-			res.send('Invalid email or password');
-		}
-	}
-	client.close();
+    if (result === true) {
+      req.session.userId = user._id;
+      req.session.user = user;
+      res.redirect('/perfil');
+    } else {
+      res.send('Invalid email or password');
+    }
+  }
+  client.close();
 });
+
 
 app.get('/register', async function (req, res) {
 	const userId = req.session.userId;
@@ -228,44 +229,44 @@ app.get('/register', async function (req, res) {
 });
 
 app.post('/register', async function (req, res) {
-	const name = req.body.name;
-	const email = req.body.email;
-	const password = req.body.password;
+  const name = req.body.name;
+  const email = req.body.email.toLowerCase(); // Convertir a minúsculas
+  const password = req.body.password;
 
-	try {
-		const client = await MongoClient.connect('mongodb://127.0.0.1:27017');
-		const db = client.db('proyecto');
-		const users = db.collection('users');
+  try {
+    const client = await MongoClient.connect('mongodb://127.0.0.1:27017');
+    const db = client.db('proyecto');
+    const users = db.collection('users');
 
-		const existingUserByName = await users.findOne({ name: name });
-		const existingUserByEmail = await users.findOne({ email: email });
+    const existingUserByName = await users.findOne({ name: name.toLowerCase() }); // Convertir a minúsculas
+    const existingUserByEmail = await users.findOne({ email: email });
 
-		if (existingUserByName) {
-			res.send('El nombre de usuario ya está registrado');
-			return;
-		}
+    if (existingUserByName) {
+      res.send('El nombre de usuario ya está registrado');
+      return;
+    }
 
-		if (existingUserByEmail) {
-			res.send('El correo electrónico ya está registrado');
-			return;
-		}
+    if (existingUserByEmail) {
+      res.send('El correo electrónico ya está registrado');
+      return;
+    }
 
-		const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-		const result = await users.insertOne({
-			name: name,
-			email: email,
-			password: hashedPassword,
-			roles: ["usuario"]
-		});
+    const result = await users.insertOne({
+      name: name.toLowerCase(), // Convertir a minúsculas
+      email: email,
+      password: hashedPassword,
+      roles: ["usuario"]
+    });
 
-		req.session.userId = result.insertedId;
-		res.redirect('/perfil');
-		client.close();
-	} catch (err) {
-		console.error(err);
-		res.send('Error registrando usuario');
-	}
+    req.session.userId = result.insertedId;
+    res.redirect('/perfil');
+    client.close();
+  } catch (err) {
+    console.error(err);
+    res.send('Error registrando usuario');
+  }
 });
 
 app.post('/logout', function (req, res) {
