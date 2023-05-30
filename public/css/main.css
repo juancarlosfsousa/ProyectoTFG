@@ -8,6 +8,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: #b9b9b9 1px 1px 3px;
 }
 
 .logo {
@@ -137,8 +138,16 @@ nav ul li a:hover {
   }
 }
 
+@media (min-width: 1700px){
+  .logo img {
+    max-width: 15%;
+    padding: 0.5rem;
+  }
+}
+
 .dark-mode header {
   background-color: #1c0c3e;
+  box-shadow: #45346a 1px 1px 3px;
 }
 
 .dark-mode nav ul li a {

@@ -25,14 +25,16 @@
         <% if (user) { %>
           <% if (user.roles.includes('admin')) { %>
             <li><a href="/admin">Admin</a></li>
-          <% } %>
-          <% if (user.roles.includes('editor') || user.roles.includes('admin')) { %>
-            <li><a href="/editor">Editor</a></li>
-          <% } %>
-          <li><a href="/perfil"><%= user.name %></a></li>
-        <% } else { %>
-          <li><a href="/login">Login</a></li>
-        <% } %>
+            <% } %>
+              <% if (user.roles.includes('editor') || user.roles.includes('admin')) { %>
+                <li><a href="/editor">Editor</a></li>
+                <% } %>
+                  <li><a href="/perfil">
+                      <%= user.name %>
+                    </a></li>
+                  <% } else { %>
+                    <li><a href="/login">Login</a></li>
+                    <% } %>
       </ul>
     </nav>
   </div>
@@ -41,10 +43,10 @@
 
 
 <script>
-	$(document).ready(function () {
-		$('.menu-toggle').click(function () {
-			$('nav').slideToggle();
-		});
-	});
+  $(document).ready(function () {
+    $('.menu-toggle').click(function () {
+      $('nav').slideToggle();
+    });
+  });
 
 </script>

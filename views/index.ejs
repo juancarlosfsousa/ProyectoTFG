@@ -5,18 +5,164 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="icon" type="image/png" href="../public/img/logo2.png">
 	<link rel="stylesheet" href="../public/css/index.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.6/index.global.min.js'></script>
+	<script src="/../public/js/calendario.js"></script>
 	<title>Voces del Alma</title>
 </head>
 
 <body>
 	<%- include('../partials/header') %>
-	<%- include('../partials/banner') %>
-	<%- include('../partials/calendartext') %>
-	<%- include('../partials/noticias') %>
-	<%- include('../partials/bannerformulario') %>
-	<%- include('../partials/footer') %>
+
+		<div class="banner">
+			<div class="banner-content">
+				<h1>¡Bienvenidos a <span class="underline">VOCES DEL ALMA</span>!</h1>
+				<p>Somos un grupo de música Gospel que busca inspirar corazones, elevar el espíritu y difundir un mensaje de
+					amor y
+					esperanza a través de nuestras melodías. Cada nota que entonamos está impregnada de fe y resuena con la fuerza
+					del
+					alma.</p>
+			</div>
+			<img src="../public/img/siluetas.png" alt="Imagen del banner">
+		</div>
+
+
+		<section id="calendariotexto">
+			<div id="calendario"></div>
+			<div id="lightbox">
+				<div id="lightboxContent"></div>
+				<button id="closeButton">Cerrar</button>
+			</div>
+
+			<div id="eventos">
+				<h2>Próximos eventos</h2>
+				<% if (events.length> 0) { %>
+					<div class="events-container">
+						<% events.forEach(function(event) { %>
+
+
+							<div class="event-box">
+								<div class="event-details">
+									<h2 class="event-title">
+										<%= event.title %>
+									</h2>
+									<p class="event-start">
+										Inicio: <%= event.formattedStart %>
+									</p>
+									<p class="event-end">
+										Fin: <%= event.formattedEnd %>
+									</p>
+								</div>
+							</div>
+
+							<% }); %>
+								<% } else { %>
+									<p class="no-news">No se ha encontrado ningún evento</p>
+									<% } %>
+					</div>
+			</div>
+
+
+
+			<div id="texto">
+				<h2>Quienes somos</h2>
+				<p>Nuestro grupo ofrece un ambiente cálido y acogedor donde la comunidad espiritual se une en armonía. Juntos,
+					levantamos nuestras voces para alabar a Dios y compartir la belleza y el poder de la música gospel con otros.
+					Cada
+					ensayo y cada actuación es una oportunidad para crear experiencias musicales inolvidables y tocar los
+					corazones de
+					quienes nos escuchan.</p>
+				<p>No importa tu nivel de experiencia o conocimiento musical, lo más importante es tu pasión y disposición para
+					crecer en comunidad y aprender unos de otros. ¡No te preocupes si aún no eres un experto! Estaremos encantados
+					de
+					ayudarte a desarrollar tus habilidades musicales y explorar tu potencial en un ambiente de apoyo y aliento.
+				</p>
+				<p>Si sientes en tu corazón el llamado a alabar a través de la música gospel y deseas unirte a un grupo dinámico
+					y
+					espiritualmente enriquecedor, ¡no esperes más! Únete a nosotros y descubre la alegría y la conexión que solo
+					la
+					música gospel puede brindar.</p>
+				<p>¡Ven y forma parte de nuestro grupo de música gospel! Juntos, llevaremos la melodía del amor divino a cada
+					rincón
+					de nuestras vidas y tocaremos los corazones de quienes nos rodean. ¡Te esperamos con los brazos abiertos y la
+					música lista para elevar nuestras almas!</p>
+			</div>
+		</section>
+
+
+
+		<% if (noticias.length> 0) { %>
+			<% for (let i=0; i < noticias.length; i +=3) { %>
+				<div class="container">
+					<% for (let j=i; j < i + 3 && j < noticias.length; j++) { %>
+						<div class="news-container">
+							<div class="news">
+								<div class="title-container" style="background-image: url('/../public<%= noticias[j].imagen %>');">
+
+								</div>
+								<h2 class="title">
+									<%= noticias[j].titulo %>
+								</h2>
+								<p class="author">
+									<%= noticias[j].autor ? noticias[j].autor.name : 'Autor desconocido' %>
+								</p>
+								<p class="date">
+									<%= noticias[j].fechaCreacion ?
+										noticias[j].fechaCreacion.toLocaleDateString('es-ES',{timeZone: 'Europe/Madrid' , hour: '2-digit' ,
+										minute: '2-digit' }) : 'Fecha desconocida' %>
+								</p>
+								<% if (noticias[j].titulo && noticias[j].titulo !=="No se ha encontrado ninguna noticia" ) { %>
+									<a href="/noticias/<%= noticias[j]._id %>" class="button">Abrir Noticia</a><br>
+									<% } %>
+							</div>
+						</div>
+						<% } %>
+				</div>
+				<% } %>
+					<% } else { %>
+						<p class="no-news">No se ha encontrado ninguna noticia</p>
+						<% } %>
+
+							<% if (noticias.length> 0) { %>
+								<div class="ver-mas-container">
+									<a href="/noticias" class="ver-mas-button">Ver noticias</a>
+								</div>
+								<% } %>
+
+
+
+									<div class="bannerform">
+										<div class="secondbanner">
+											<div class="secondbanner-content">
+												<h1>¡Únete a nuestro grupo de música gospel!</h1>
+												<p>¿Eres un amante de la música que busca unir tu voz a coros llenos de armonía celestial?
+													¡Tenemos el lugar
+													perfecto para ti! Nuestro grupo de música gospel está buscando personas apasionadas que deseen
+													compartir su
+													talento y devoción a través de la música.</p>
+												<p>¡Inscríbete!</p>
+											</div>
+											<img src="../public/img/silueta.png" alt="Foto del banner" class="banner-image">
+										</div>
+										<div class="form">
+											<h2>¡Inscríbete!</h2>
+											<form action="mailto:juancarlosfsousa@gmail.com" method="post">
+												<label for="nombre">Nombre:</label>
+												<input type="text" id="nombre" placeholder="Nombre">
+												<label for="email">Email:</label>
+												<input type="email" id="email" placeholder="Email">
+												<label for="telefono">Teléfono:</label>
+												<input type="tel" id="telefono" placeholder="Teléfono">
+												<button type="submit">Enviar</button>
+											</form>
+										</div>
+									</div>
+
+
+
+									<%- include('../partials/footer') %>
 </body>
 
 </html>

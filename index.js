@@ -57,7 +57,6 @@ const upload = multer({ storage: storage });
 app.post('/upload', upload.single('imagen'), (req, res) => {
   if (req.file) {
     const imageUrl = '/uploads/' + req.file.filename;
-    // Realiza las acciones necesarias con la URL de la imagen (por ejemplo, guardarla en la base de datos)
     res.send('Archivo subido correctamente: ' + imageUrl);
   } else {
     res.status(400).send('No se ha proporcionado ningún archivo');
@@ -175,12 +174,12 @@ app.get('/', async function (req, res) {
       .sort({ fechaCreacion: -1 })
       .limit(3);
 
-    noticias.splice(3); // Para solo pasar 3 noticias
-		const events = (await Evento.find({}).sort({ start: 1 })); // Ordenar por fecha de inicio ascendente
+    noticias.splice(3);
+		const events = (await Evento.find({}).sort({ start: 1 }));
 		events.splice(3);
 		
 		const formattedEvents = events.map(event => ({
-			id: event._id,// Agregar la ID del evento
+			id: event._id,
 			title: event.title,
 			formattedStart: moment(event.start).format("DD/MM/YYYY HH:mm"),
 			formattedEnd: moment(event.end).format("DD/MM/YYYY HH:mm")
@@ -230,7 +229,7 @@ app.get('/register', async function (req, res) {
 
 app.post('/register', async function (req, res) {
   const name = req.body.name;
-  const email = req.body.email.toLowerCase(); // Convertir a minúsculas
+  const email = req.body.email.toLowerCase(); 
   const password = req.body.password;
 
   try {
@@ -238,7 +237,7 @@ app.post('/register', async function (req, res) {
     const db = client.db('proyecto');
     const users = db.collection('users');
 
-    const existingUserByName = await users.findOne({ name: name.toLowerCase() }); // Convertir a minúsculas
+    const existingUserByName = await users.findOne({ name: name.toLowerCase() }); 
     const existingUserByEmail = await users.findOne({ email: email });
 
     if (existingUserByName) {
@@ -254,7 +253,7 @@ app.post('/register', async function (req, res) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await users.insertOne({
-      name: name.toLowerCase(), // Convertir a minúsculas
+      name: name.toLowerCase(), 
       email: email,
       password: hashedPassword,
       roles: ["usuario"]
@@ -506,8 +505,6 @@ app.post('/noticias', upload.single('imagen'), async (req, res) => {
 	const { titulo, contenido } = req.body;
 	const autor = req.session.userId; // Obtener el ID del usuario logeado desde la sesión
 	const imagen = req.file ? '/uploads/' + req.file.filename : '/uploads/prueba.gif';
-
-
 
 	try {
 		const nuevaNoticia = new Noticia({
