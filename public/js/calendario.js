@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var calendarEl = document.getElementById('calendario');
   var calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: 'dayGridMonth',
-    events: '/eventosjson',
+    events: '/eventos',
     locale: 'es',
     firstDay: 1,
     buttonText: {
