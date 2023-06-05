@@ -6,38 +6,39 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Editar Noticia</title>
-	<link rel="stylesheet" href="/../public/css/main.css">
+  <link rel="stylesheet" href="/../public/css/main.css">
 </head>
 
 <body>
   <%- include('../partials/header') %>
-  <div class="edit-form">
-    <h1 class="form-title">Editar Noticia</h1>
-    <form method="POST" action="/noticias/<%= noticia._id %>?_method=PUT">
-      <div class="form-field">
-        <label class="form-label" for="titulo">Título:</label>
-        <input class="form-input" type="text" id="titulo" name="titulo" required value="<%= noticia.titulo %>">
-      </div>
-      <div class="form-field">
-        <label class="form-label" for="contenido">Contenido:</label>
-        <textarea class="form-input" id="contenido" name="contenido" rows="5"><%= noticia.contenido %></textarea>
-      </div>
-      <div class="form-field">
-        <label class="form-label" for="autor">Autor:</label>
-        <select class="select-input" id="autor" name="autor">
-          <% users.forEach(function(user) { %>
-          <% if (user.roles.includes('editor') || user.roles.includes('admin')) { %>
-          <option value="<%= user.name %>" <% if (user.name === noticia.autor) { %>selected<% } %>><%= user.name %></option>
-          <% } %>
-          <% }); %>
-        </select>
-      </div>
-      <div class="form-field">
-        <input class="form-submit" type="submit" value="Guardar">
-        <a class="cancel-link" href="javascript:history.back()">Cancelar</a>
-      </div>
-    </form>
-  </div>
+    <div class="edit-form">
+      <h1 class="form-title">Editar Noticia</h1>
+      <form method="POST" action="/noticias/<%= noticia._id %>?_method=PUT">
+        <div class="form-field">
+          <label class="form-label" for="titulo">Título:</label>
+          <input class="form-input" type="text" id="titulo" name="titulo" required value="<%= noticia.titulo %>">
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="contenido">Contenido:</label>
+          <textarea class="form-input" id="contenido" name="contenido" rows="5"><%= noticia.contenido %></textarea>
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="autor">Autor:</label>
+          <select class="select-input" id="autor" name="autor">
+            <% users.forEach(function(user) { %>
+              <% if (user.roles.includes('editor') || user.roles.includes('admin')) { %>
+                <option value="<%= user.name %>" <% if (user.name===noticia.autor) { %>selected<% } %>><%= user.name %>
+                </option>
+                <% } %>
+                  <% }); %>
+          </select>
+        </div>
+        <div class="form-field">
+          <input class="form-submit" type="submit" value="Guardar">
+          <a class="cancel-link" href="javascript:history.back()">Cancelar</a>
+        </div>
+      </form>
+    </div>
 </body>
 
 </html>

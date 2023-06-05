@@ -64,7 +64,8 @@ input[type="submit"]:hover {
   color: white;
 }
 
-.dark-mode .formulario form input:not(.formulario form input[type="submit"]), .dark-mode textarea {
+.dark-mode .formulario form input:not(.formulario form input[type="submit"]),
+.dark-mode textarea {
   background-color: #645883;
   border: none;
   color: white;

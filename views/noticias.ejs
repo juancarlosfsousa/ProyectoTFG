@@ -2,40 +2,40 @@
 <html>
 
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Noticias</title>
-  <link rel="stylesheet" href="../public/css/noticiasview.css">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Noticias</title>
+	<link rel="stylesheet" href="../public/css/noticiasview.css">
 </head>
 
 <body>
-  <%- include('../partials/header') %>
-    <h1>Noticias</h1>
+	<%- include('../partials/header') %>
+		<h1>Noticias</h1>
 
-    <% if (noticias.length> 0) { %>
-      <div class="container">
-        <% noticias.forEach(function(noticia) { %>
-          <div class="news">
-            <div class="title-container" style="background-image: url('/../public<%= noticia.imagen %>')">
-            </div>
-            <h2 class="title">
-              <%= noticia.titulo %>
-            </h2>
-            <p class="author">
-              <%= noticia.autor ? noticia.autor.name : 'Autor desconocido' %>
-            </p>
-            <p class="date">
-              <%= noticia.fechaCreacion ? noticia.fechaCreacion.toLocaleDateString('es-ES', {timeZone: 'Europe/Madrid' ,
-                hour: '2-digit' , minute: '2-digit' }) : 'Fecha desconocida' %>
-            </p>
-            <a href="/noticias/<%= noticia._id %>" class="button">Abrir Noticia</a>
-          </div>
-          <% }); %>
-      </div>
-      <% } else { %>
-        <p class="no-news">No se ha encontrado ninguna noticia</p>
-        <% } %>
+		<% if (noticias.length> 0) { %>
+			<div class="container">
+				<% noticias.forEach(function(noticia) { %>
+					<div class="news">
+						<div class="title-container" style="background-image: url('/../public<%= noticia.imagen %>')">
+						</div>
+						<h2 class="title">
+							<%= noticia.titulo %>
+						</h2>
+						<p class="author">
+							<%= noticia.autor ? noticia.autor.name : 'Autor desconocido' %>
+						</p>
+						<p class="date">
+							<%= noticia.fechaCreacion ? noticia.fechaCreacion.toLocaleDateString('es-ES', {timeZone: 'Europe/Madrid' ,
+								hour: '2-digit' , minute: '2-digit' }) : 'Fecha desconocida' %>
+						</p>
+						<a href="/noticias/<%= noticia._id %>" class="button">Abrir Noticia</a>
+					</div>
+					<% }); %>
+			</div>
+			<% } else { %>
+				<p class="no-news">No se ha encontrado ninguna noticia</p>
+				<% } %>
 
 </body>
 

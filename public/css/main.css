@@ -91,7 +91,8 @@ nav ul li a:hover {
 
   nav {
     position: absolute;
-    top: 100%; /* Actualiza el valor top para posicionar el menú justo debajo del encabezado */
+    top: 100%;
+    /* Actualiza el valor top para posicionar el menú justo debajo del encabezado */
     left: 0;
     width: 100%;
     background-color: white;
@@ -112,7 +113,7 @@ nav ul li a:hover {
   nav ul li {
     margin: 0 auto 1rem auto;
   }
-  
+
   .menu-container {
     position: absolute;
     top: 100%;
@@ -126,6 +127,7 @@ nav ul li a:hover {
   .menu-toggle {
     display: none;
   }
+
   nav {
     display: flex !important;
   }
@@ -138,7 +140,7 @@ nav ul li a:hover {
   }
 }
 
-@media (min-width: 1700px){
+@media (min-width: 1700px) {
   .logo img {
     max-width: 15%;
     padding: 0.5rem;
@@ -168,7 +170,7 @@ nav ul li a:hover {
 footer {
   width: 100%;
   height: 30vh;
-  background-color: white; 
+  background-color: white;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -180,14 +182,14 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
   padding: 20px 0;
-  gap: 10px; 
+  gap: 10px;
 }
 
 .text-section {
   text-align: center;
-  flex-basis: 100%; 
+  flex-basis: 100%;
   margin-bottom: 1rem;
 }
 
@@ -198,25 +200,25 @@ footer {
 
 .icon-section {
   text-align: center;
-  flex-basis: 100%; 
+  flex-basis: 100%;
 }
 
 .icon-section a {
   display: inline-block;
   margin: 0 2rem;
-  font-size: 24px; 
+  font-size: 24px;
   color: #000000;
   border-radius: 50%;
   background-color: #d6c6ff;
-  padding: 8px 12px; 
-  transition: background-color 0.3s ease; 
+  padding: 8px 12px;
+  transition: background-color 0.3s ease;
 }
 
 .icon-section a:hover {
-  background-color: #ad98e3; 
+  background-color: #ad98e3;
 }
 
-.dark-mode footer{
+.dark-mode footer {
   background-color: #1c0c3e;
 }
 
@@ -234,24 +236,24 @@ footer {
 
 @media (max-width: 768px) {
   .footercontent {
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
   }
 
   .text-section {
-    flex-basis: 100%; 
+    flex-basis: 100%;
     display: flex;
     justify-content: center;
-    margin-bottom: 1rem; 
+    margin-bottom: 1rem;
   }
 
   .text-section p {
-    flex: 1; 
+    flex: 1;
     margin: 0 1.5rem;
   }
 
   .icon-section {
     flex-basis: 100%;
-    display: flex; 
+    display: flex;
     justify-content: center;
   }
 }
@@ -345,6 +347,7 @@ footer {
   .news-card {
     max-width: 80%;
   }
+
   .image {
     width: 30%;
   }
@@ -640,7 +643,8 @@ input[type="password"] {
   color: white;
 }
 
-.dark-mode textarea#contenido.form-input, .dark-mode select#autor.select-input {
+.dark-mode textarea#contenido.form-input,
+.dark-mode select#autor.select-input {
   background-color: #645883;
   border: none;
   color: white;

@@ -1,4 +1,4 @@
-// Importar los paquetes necesarios
+// Importar los paquetes necesarios que hemos instalado previamente
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -6,10 +6,12 @@ const fullcalendar = require('fullcalendar');
 const moment = require('moment');
 var path = require('path')
 const cron = require('node-cron');
+const multer = require('multer');
 
-// Crear una instancia de la aplicación
+//Crear una instancia de la aplicación
 const app = express();
 
+//Con esto configuramos la ruta en el cual se encuentran los archivos estaticos. Esto nos permite acceder a los archivos CSS, JS e imágenes de su interior.
 app.use('/public', express.static(path.join(__dirname, 'public')))
 
 // Configurar el middleware bodyParser para analizar las solicitudes POST
@@ -19,26 +21,21 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 
-// Ejecutar el cron job cada 5 minutos
+// Ejecutar el cron job cada 5 minutos para borrar los eventos pasados
 cron.schedule('*/5 * * * *', async () => {
 	try {
 		const currentDate = new Date();
-		await Evento.deleteMany({ end: { $lt: currentDate } });
+		await Evento.deleteMany({ end: { $lt: currentDate } }); //borra los eventos los cuales su fecha de finalización sea anterior a la actual.
 	} catch (err) {
 		console.error('Error al eliminar los eventos automáticamente', err);
 	}
 });
 
-// Iniciar el servidor
+//Iniciar el servidorv en el puerto 3000
 app.listen(3000, () => console.log('Servidor iniciado en http://127.0.0.1:3000'));
 
 
-
-
-
-const multer = require('multer');
-
-// Configurar el almacenamiento y el nombre de los archivos
+//Con el siguiente código configuramos la subida de archivos para usarlo en las noticias.
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
 		cb(null, 'public/uploads'); // Directorio donde se guardarán las imágenes
@@ -50,10 +47,10 @@ const storage = multer.diskStorage({
 	}
 });
 
-// Crear una instancia de multer con la configuración de almacenamiento
+//Creamos una instancia de multer con la configuración de almacenamiento
 const upload = multer({ storage: storage });
 
-// Ruta para manejar la carga de archivos
+//Configuramos Ruta para manejar la carga de archivos
 app.post('/upload', upload.single('imagen'), (req, res) => {
 	if (req.file) {
 		const imageUrl = '/uploads/' + req.file.filename;
@@ -63,13 +60,13 @@ app.post('/upload', upload.single('imagen'), (req, res) => {
 	}
 });
 
-
-
-
+//establecemos que el motor de las vistas sea EJS.
+app.set('view engine', 'ejs');
 
 
 //Autentificación
 
+//Importamos paquetes necesarios para la autentificación de archivos.
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const {
@@ -77,13 +74,13 @@ const {
 } = require('mongodb');
 const MongoDBStore = require('connect-mongodb-session')(session);
 
-app.set('view engine', 'ejs');
-
+//Aquí definimos donde se guardan las sesiones de los usuarios.
 const store = new MongoDBStore({
 	uri: 'mongodb://127.0.0.1:27017/proyecto',
 	collection: 'sessions'
 });
 
+//Configuramos el middleware para las sesiones de los usuarios.
 app.use(session({
 	secret: 'mysecretkey',
 	resave: false,
@@ -116,55 +113,55 @@ const User = mongoose.model('User', userSchema);
 
 //Verificar si un usuario está autentificado.
 app.use(async function (req, res, next) {
-	const userId = req.session.userId;
+	const userId = req.session.userId; //Se obtiene la ID del usuario logueado
 	if (userId) {
-		const client = await MongoClient.connect('mongodb://127.0.0.1:27017');
+		const client = await MongoClient.connect('mongodb://127.0.0.1:27017'); //Se realiza conexión con la base de datos y con la colección usuarios.
 		const db = client.db('proyecto');
 		const users = db.collection('users');
-		const user = await users.findOne({ _id: userId });
-		res.locals.user = user;
-		client.close();
+		const user = await users.findOne({ _id: userId }); //se verifica si el usuario existe en la BBDD buscando por su id.
+		res.locals.user = user; //asigna el usuario autentificado
+		client.close(); //se cierra la conexión con la bbdd
 	} else {
-		res.locals.user = null;
+		res.locals.user = null; //asigna como usuario autentificado null
 	}
 	next();
 })
 
 //Verificar si un usuario dispone del rol editor para acceder a ciertas vistas y controladores.
 async function checkEditorRole(req, res, next) {
-	const userId = req.session.userId;
-	if (!userId) {
+	const userId = req.session.userId; //Se obtiene la ID del usuario logueado
+	if (!userId) { //si no está autentificado se le redigire a login
 		res.redirect('/login');
 	} else {
-		const client = await MongoClient.connect('mongodb://127.0.0.1:27017');
+		const client = await MongoClient.connect('mongodb://127.0.0.1:27017'); //Se realiza conexión con la base de datos y con la colección usuarios.
 		const db = client.db('proyecto');
 		const users = db.collection('users');
 		const user = await users.findOne({ _id: userId });
-		if (user.roles.includes('editor') || user.roles.includes('admin')) {
+		if (user.roles.includes('editor') || user.roles.includes('admin')) { //verificar si incluye el rol editor y/o admin para permitir o denegar acceso.
 			next();
 		} else {
 			res.status(403).send('No tienes permisos para acceder a esta página');
 		}
-		client.close();
+		client.close(); //se cierra la conexión con la bbdd
 	}
 }
 
 //Verificar si un usuario dispone del rol admin para acceder a ciertas vistas y controladores.
 async function checkAdminRole(req, res, next) {
 	const userId = req.session.userId;
-	if (!userId) {
+	if (!userId) { //si no está autentificado se le redigire a login
 		res.redirect('/login');
 	} else {
-		const client = await MongoClient.connect('mongodb://127.0.0.1:27017');
+		const client = await MongoClient.connect('mongodb://127.0.0.1:27017');  //Se realiza conexión con la base de datos y con la colección usuarios.
 		const db = client.db('proyecto');
 		const users = db.collection('users');
 		const user = await users.findOne({ _id: userId });
-		if (user.roles.includes('admin')) {
+		if (user.roles.includes('admin')) { //verificar si incluye el rol  admin para permitir o denegar acceso.
 			next();
 		} else {
 			res.status(403).send('No tienes permisos para acceder a esta página');
 		}
-		client.close();
+		client.close(); //se cierra la conexión con la bbdd
 	}
 }
 
@@ -212,7 +209,7 @@ app.post('/login', async function (req, res) {
 	} else {
 		const result = await bcrypt.compare(password, user.password); //si se encuentra un usuario con ese email se usa bcrypt.compare para comparar las contraseñas
 
-		if (result === true) { 
+		if (result === true) {
 			req.session.userId = user._id; //si es correcta se establece al usuario logeado usuario y el ID del usuario para establecer la sesión.
 			req.session.user = user;
 			res.redirect('/perfil'); //se le redigire a la vista de perfil
@@ -233,7 +230,7 @@ app.get('/register', async function (req, res) {
 //Manejamos la solicitud POST de la vista register.
 app.post('/register', async function (req, res) {
 	const name = req.body.name; // Se obtiene el nombre, email y la contraseña.
-	const email = req.body.email.toLowerCase(); 
+	const email = req.body.email.toLowerCase();
 	const password = req.body.password;
 
 	try {
@@ -384,86 +381,89 @@ const EventoSchema = new mongoose.Schema({
 
 const Evento = mongoose.model('Evento', EventoSchema);
 
-// Obtener los eventos desde la base de datos
+// Obtener los eventos desde la base de datos, además permite ver los eventos en formato JSON.
 app.get('/eventos', (req, res) => {
 	Evento.find({})
 		.then((eventos) => res.send(eventos))
 		.catch((err) => res.status(500).send('Error al obtener los eventos', err));
 });
 
-app.get('/eventos/crear', checkEditorRole, (req, res) => {
+//Mediante una petición GET renderizamos la vista de crearEvento
+app.get('/eventos/crear', checkEditorRole, (req, res) => { //verifica que el rol sea editor y/o admin
 	res.render('crearEvento');
 });
 
-app.post('/eventos/crear', checkEditorRole, (req, res) => {
-	const { title, start, end } = req.body;
+//Manejamos la petición POST para crear noticias
+app.post('/eventos/crear', checkEditorRole, (req, res) => { //verifica que el rol sea editor y/o admin
+	const { title, start, end } = req.body; //se extraen los datos title, start y end introducidos en el formulario.
 	const currentDate = new Date();
 
-	if (new Date(start) < currentDate) {
+	if (new Date(start) < currentDate) {  //si la fecha y hora de inicio es posterior a la actual no permite crear evento
 		return res.status(400).send('La fecha de inicio no puede ser anterior a la fecha actual');
 	}
 
-	if (moment(end).isBefore(start)) {
+	if (moment(end).isBefore(start)) { //si la fecha y hora de finalización es posterior a la de inicio no se permite crear evento
 		return res.status(400).send('La fecha de finalización debe ser posterior a la fecha de inicio');
 	}
 
-	const nuevoEvento = new Evento({
+	const nuevoEvento = new Evento({ //cremos el evento con los datos introducidos.
 		title,
 		start,
 		end
 	});
 
-	nuevoEvento.save()
-		.then(() => res.redirect('/editor'))
+	nuevoEvento.save() //el evento se guarda en la BBDD.
+		.then(() => res.redirect('/editor')) //redirigimos a la vista editor
 		.catch((err) => res.status(500).send('Error al crear el evento: ' + err));
 });
 
-//modificar
-app.get('/eventos/:id/editar', checkEditorRole, async (req, res) => {
-	const eventId = req.params.id;
+//Mediante una petición GET renderizamos la vista de editarEvento
+app.get('/eventos/:id/editar', checkEditorRole, async (req, res) => { //verifica que el rol sea editor y/o admin
+	const eventId = req.params.id; //Se obtiene la ID del evento.
 
 	try {
-		const evento = await Evento.findById(eventId).exec();
+		const evento = await Evento.findById(eventId).exec(); //se realiza una consulta a la BBDD mediante la ID del evento.
 
 		if (!evento) {
 			return res.status(404).send('No se encontró el evento');
 		}
 
-		// Obtener las fechas en la zona horaria deseada
+		//Formatemos las fechas con el siguiente formato usando moment.
 		const startFormatted = moment(evento.start).format('YYYY-MM-DDTHH:mm');
 		const endFormatted = moment(evento.end).format('YYYY-MM-DDTHH:mm');
 
-		res.render('editarEvento', { evento, startFormatted, endFormatted });
+		res.render('editarEvento', { evento, startFormatted, endFormatted }); //renderizamos la vista editarEvento pasando como parametros al evento y las fechas formateadas.
 	} catch (error) {
 		console.error('Error al obtener el evento para editar', error);
 		res.status(500).send('Error al obtener el evento para editar');
 	}
 });
 
-app.post('/eventos/:id/actualizar', checkEditorRole, (req, res) => {
-	const eventId = req.params.id;
-	const { title, start, end } = req.body;
+//Mediante una petición POST procedemos a la edición de los eventos
+app.post('/eventos/:id/actualizar', checkEditorRole, (req, res) => { //verifica que el rol sea editor y/o admin
+	const eventId = req.params.id; //Se obtiene la ID del evento.
+	const { title, start, end } = req.body; //se extraen los datos title, start y end del formulario.
 	const currentDate = new Date();
 
-	if (new Date(start) < currentDate) {
+	if (new Date(start) < currentDate) { //si la fecha y hora de inicio es posterior a la actual no permite crear evento
 		return res.status(400).send('La fecha de inicio no puede ser anterior a la fecha actual');
 	}
 
-	if (moment(end).isBefore(start)) {
+	if (moment(end).isBefore(start)) { //si la fecha y hora de finalización es posterior a la de inicio no se permite crear evento
 		return res.status(400).send('La fecha de finalización debe ser posterior a la fecha de inicio');
 	}
 
-	Evento.findByIdAndUpdate(eventId, { title, start, end })
-		.then(() => res.redirect("/editor"))
+	Evento.findByIdAndUpdate(eventId, { title, start, end }) //buscamos al evento por su ID y modifcamos con los datos introducidos.
+		.then(() => res.redirect("/editor")) //Redirigimos a la vista editor
 		.catch((err) => res.status(500).send('Error al actualizar el evento: ' + err));
 });
 
-//borrar
-app.post('/eventos/:id/borrar', checkEditorRole, (req, res) => {
-	const eventId = req.params.id;
+//Manejamos una petición POST para borrar eventos
+app.post('/eventos/:id/borrar', checkEditorRole, (req, res) => { //verifica que el rol sea editor y/o admin
+	const eventId = req.params.id; //Se obtiene la ID del evento.
 
-	Evento.findByIdAndDelete(eventId)
-		.then(() => res.redirect("/editor"))
+	Evento.findByIdAndDelete(eventId) //borramos el evento por su id
+		.then(() => res.redirect("/editor")) //Redirigimos a la vista editor
 		.catch((err) => res.status(500).send('Error al borrar el evento: ' + err));
 });
 
@@ -487,88 +487,77 @@ const NoticiaSchema = new mongoose.Schema({
 });
 const Noticia = mongoose.model('Noticia', NoticiaSchema);
 
+
+//Mediante una petición GET renderizamos la vista de noticias 
 app.get('/noticias', (req, res) => {
 	Noticia.find({})
-		.populate('autor', 'name') // Para obtener solo el nombre del autor y no su ID.
-		.sort({ fechaCreacion: -1 }) // Ordenar por fecha de creación descendente
+		.populate('autor', 'name') //Obtenenemos solo el nombre del autor y no su ID.
+		.sort({ fechaCreacion: -1 }) //Ordenar por fecha de creación descendente
 		.then((noticias) => {
-			res.render('noticias', { noticias });
+			res.render('noticias', { noticias }); //renderizamos las noticias
 		})
 		.catch((err) => res.status(500).send('Error al obtener las noticias', err));
 });
 
-//ficha
-app.get('/noticias/:id', (req, res) => {
-	const noticiaId = req.params.id;
-
-	Noticia.findById(noticiaId)
-		.populate('autor', 'name') // Obtener solo el nombre del autor
-		.then((noticia) => {
-			res.render('fichaNoticia', { noticia });
-		})
-		.catch((error) => {
-			console.log('Error al obtener la noticia:', error);
-			res.status(500).send('Error al obtener la noticia');
-		});
-});
-
-app.get('/noticias/crear', checkEditorRole, async function (req, res) {
+//Mediante una petición GET renderizamos la vista de crear noticias
+app.get('/noticias/crear', checkEditorRole, async function (req, res) { //verifica que el rol sea editor y/o admin
 	try {
-		const editorAdminUsers = await User.find({ roles: { $in: ['editor', 'admin'] } });
-		res.render('crearNoticia', { users: editorAdminUsers });
+		const editorAdminUsers = await User.find({ roles: { $in: ['editor', 'admin'] } }); //buscamos los usuarios con los roles editor y admin que son los unicos que pueden crear, editar y borrar noticias.
+		res.render('crearNoticia', { users: editorAdminUsers }); //renderizamos la vista de crearNoticia pasando de parámetro un array con los usuarios con esos roles.
 	} catch (error) {
 		res.status(500).send('Error al obtener los usuarios');
 	}
 });
 
-app.post('/noticias', upload.single('imagen'), checkEditorRole, async (req, res) => {
-	const { titulo, contenido } = req.body;
-	const autor = req.session.userId; // Obtener el ID del usuario logeado desde la sesión
-	const imagen = req.file ? '/uploads/' + req.file.filename : '/uploads/prueba.gif';
+//Manejamos la petición POST para crear noticias
+app.post('/noticias', upload.single('imagen'), checkEditorRole, async (req, res) => {  //verifica que el rol sea editor y/o admin
+	const { titulo, contenido } = req.body; //Obtenemos los campos titulo y contenido del formulario
+	const autor = req.session.userId; //Obtenemos el ID del usuario logeado desde la sesión para incluirlo como autor de la noticia.
+	const imagen = req.file ? '/uploads/' + req.file.filename : '/uploads/prueba.png'; //Establecemos la imagen subida como imagen, en caso de no se haya subido ninguna se pondrá prueba.png
 
 	try {
-		const nuevaNoticia = new Noticia({
+		const nuevaNoticia = new Noticia({ //cremos la noticias con los datos introducidos.
 			titulo,
 			contenido,
 			imagen,
 			autor // Establece la ID del usuario como referencia
 		});
-		await nuevaNoticia.save();
-		res.redirect("/editor");
+		await nuevaNoticia.save(); //guardamos la noticia en la BBDD
+		res.redirect("/editor"); //redigirimos a la vista editor
 	} catch (err) {
 		res.status(500).send('Error al crear la noticia: ' + err);
 	}
 });
 
-//editar
-app.get('/noticias/:id/editar', checkEditorRole, async function (req, res) {
+//Mediante una petición GET renderizamos vista de editar noticias con la noticia seleccionada.
+app.get('/noticias/:id/editar', checkEditorRole, async function (req, res) {  //verifica que el rol sea editor y/o admin
 	try {
-		const noticiaId = req.params.id;
-		const noticia = await Noticia.findById(noticiaId);
-		const editorAdminUsers = await User.find({ roles: { $in: ['editor', 'admin'] } });
-		res.render('editarNoticia', { noticia, users: editorAdminUsers });
+		const noticiaId = req.params.id; //Se obtiene la ID de la noticia.
+		const noticia = await Noticia.findById(noticiaId); //Buscamos la noticia por su ID
+		const editorAdminUsers = await User.find({ roles: { $in: ['editor', 'admin'] } });  //buscamos los usuarios con los roles editor y admin que son los unicos que pueden crear, editar y borrar noticias.
+		res.render('editarNoticia', { noticia, users: editorAdminUsers }); //renderizamos la vista de editarNoticia pasando como parámetro las noticias y el array con los usuarios con el rol editor y/o admin.
 	} catch (error) {
 		res.status(500).send('Error al obtener la noticia');
 	}
 });
 
-app.post('/noticias/:id', checkEditorRole, (req, res) => {
-	const noticiaId = req.params.id;
-	const { titulo, contenido, autor } = req.body; //AQUI AUTOR NO ESTABA BIEN DEFINIDO, SE LLAMABA AUTORNAME
+//Manejamos la petición POST para editar noricias.
+app.post('/noticias/:id', checkEditorRole, (req, res) => { //verifica que el rol sea editor y/o admin
+	const noticiaId = req.params.id; //Se obtiene la ID de la noticia.
+	const { titulo, contenido, autor } = req.body; //Obtenemos los campos titulo, contenido y autor del formulario
 
-	// Buscar el usuario por su nombre y obtener su ID
-	User.findOne({ name: autor }) //AQUI AUTOR NO ESTABA BIEN DEFINIDO
+	//Buscar el usuario por su nombre y obtener su ID para establecer el autor correctamente con su nombre
+	User.findOne({ name: autor })
 		.then((user) => {
 			if (!user) {
 				throw new Error('Usuario no encontrado');
 			}
-
 			const autor = user._id;
 
-			// Actualizar la noticia por su ID
+			// Actualizamos la noticia por su ID introduciendo los campos del formulario.
 			Noticia.findByIdAndUpdate(noticiaId, { titulo, contenido, autor })
 				.then(() => {
-					res.redirect('/editor');
+					res.redirect('/editor'); //redirigimos a la vista editor.
 				})
 				.catch((error) => {
 					console.log('Error al actualizar la noticia:', error);
@@ -581,9 +570,24 @@ app.post('/noticias/:id', checkEditorRole, (req, res) => {
 		});
 });
 
-//borrar
-app.post('/noticias/:id/borrar', checkEditorRole, async function (req, res) {
-	const noticiaId = req.params.id;
-	await Noticia.findByIdAndDelete(noticiaId);
+//Mediante una petición GET renderizamos la ficha de la noticia seleccionada
+app.get('/noticias/:id', (req, res) => {
+	const noticiaId = req.params.id; //Se obtiene la ID de la noticia.
+
+	Noticia.findById(noticiaId) //buscamos a la noticia por su ID
+		.populate('autor', 'name') //Obtenemos solo el nombre del autor
+		.then((noticia) => {
+			res.render('fichaNoticia', { noticia }); //renderizamos la vista fichaNoticia pasando como parámetro noticia.
+		})
+		.catch((error) => {
+			console.log('Error al obtener la noticia:', error);
+			res.status(500).send('Error al obtener la noticia');
+		});
+});
+
+//Manejamos una petición POST para borrar las noticias
+app.post('/noticias/:id/borrar', checkEditorRole, async function (req, res) {  //verifica que el rol sea editor y/o admin
+	const noticiaId = req.params.id; //Se obtiene la ID de la noticia.
+	await Noticia.findByIdAndDelete(noticiaId); //busca la noticia por ID y la elimina
 	res.redirect('/editor');
 });
