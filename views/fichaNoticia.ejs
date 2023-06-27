@@ -5,8 +5,10 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ficha de Noticia</title>
+  <title><%= noticia.titulo %></title>
   <link rel="stylesheet" href="/../public/css/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 </head>
 
 <%- include('../partials/header') %>
@@ -34,6 +36,121 @@
         <a href="javascript:history.back()" class="back-button">Volver</a>
       </div>
     </div>
+
+    <!-- Mostrar los comentarios de la noticia -->
+    <% if (noticia.comentarios.length> 0) { %>
+      <h2 class="profile-name">Comentarios:</h2>
+      <% for (const comentario of noticia.comentarios) { %>
+        <!-- Mostrar el comentario existente -->
+        <div class="comment-card">
+          <!-- Información del comentario -->
+          <div class="comment-info">
+            <span class="comment-author">
+              <a href="/perfil/<%= comentario.nombreUsuario %>" style="color: <%= comentario.usuario.color %>">
+                <%= comentario.nombreUsuario %>
+              </a>
+            </span>
+            <span class="comment-date">
+              <%= comentario.fecha.toLocaleString('es-ES', { timeZone: 'Europe/Madrid' }) %>
+            </span>
+          </div>
+          <p class="comment-content">
+            <%= comentario.contenido %>
+          </p>
+          <% if (user && user.roles && (user.roles.includes('editor') || user.roles.includes('admin') ||
+            user._id.toString()===comentario.usuario.toString())) { %>
+            <!-- Formulario para borrar el comentario existente -->
+            <form method="POST" class="borrar"
+              action="/noticias/<%= noticia._id %>/comentarios/<%= comentario._id %>/borrar">
+              <button type="submit" class="delete-comment-button">
+                <i class="fas fa-trash"></i>
+              </button>
+            </form>
+            <% } %>
+
+              <!-- Mostrar las respuestas del comentario -->
+              <% if (comentario.respuestas.length> 0) { %>
+                <div class="comment-responses">
+                  <% for (const respuesta of comentario.respuestas) { %>
+                    <div class="response-card">
+                      <div class="comment-info">
+                        <span class="comment-author">
+                          <a href="/perfil/<%= respuesta.nombreUsuario %>"
+                            style="color: <%= respuesta.usuario.color %>">
+                            <%= respuesta.nombreUsuario %>
+                          </a>
+                        </span>
+                        <span class="comment-date">
+                          <%= respuesta.fecha.toLocaleString('es-ES', { timeZone: 'Europe/Madrid' }) %>
+                        </span>
+                      </div>
+                      <p class="comment-content">
+                        <%= respuesta.contenido %>
+                      </p>
+                      <% if (user && (user.roles.includes('editor') || user.roles.includes('admin') ||
+                        user._id.toString()===respuesta.usuario.toString())) { %>
+                        <!-- Formulario para borrar la respuesta existente -->
+                        <form method="POST" class="borrar"
+                          action="/noticias/<%= noticia._id %>/comentarios/<%= comentario._id %>/respuestas/<%= respuesta._id %>/borrar">
+                          <button type="submit" class="delete-comment-button">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </form>
+                        <% } %>
+                    </div>
+                    <% } %>
+                </div>
+                <% } %>
+                  <!-- Botón para mostrar/ocultar el formulario de respuesta -->
+                  <button class="reply-toggle-button">
+                    <i class="fas fa-reply"></i> Responder
+                  </button>
+                  <!-- Formulario para responder al comentario -->
+                  <form method="POST" action="/noticias/<%= noticia._id %>/comentarios" class="comment-form reply-form">
+                    <input type="hidden" name="comentarioId" value="<%= comentario._id %>">
+                    <textarea name="contenido" placeholder="Respuesta" required></textarea>
+                    <button type="submit" class="reply-submit-button">Enviar</button>
+                  </form>
+        </div>
+
+        <% } %>
+          <% } else { %>
+            <p class="no-news">No hay comentarios aún.</p>
+            <% } %>
+
+              <!-- Formulario para agregar un nuevo comentario -->
+              <% if (user) { %>
+                <form class="comment-form" action="/noticias/<%= noticia._id %>/comentarios" method="post">
+                  <textarea name="contenido" rows="4" cols="50" placeholder="Escribe tu comentario"></textarea>
+                  <button type="submit">Comentar</button>
+                </form>
+                <% } else { %>
+                  <p class="no-news">Inicia sesión para comentar.</p>
+                  <% } %>
   </body>
 
 </html>
+
+<script>
+  // Manejar clic en el botón de mostrar/ocultar respuesta
+  const replyToggleButtons = document.querySelectorAll('.reply-toggle-button');
+
+  replyToggleButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const replyForm = button.nextElementSibling;
+
+      if (replyForm.style.display === 'block') {
+        replyForm.style.display = 'none';
+      } else {
+        // Ocultar todos los formularios de respuesta abiertos
+        const allReplyForms = document.querySelectorAll('.reply-form');
+        allReplyForms.forEach(form => {
+          form.style.display = 'none';
+        });
+
+        replyForm.style.display = 'block';
+      }
+    });
+  });
+
+</script>

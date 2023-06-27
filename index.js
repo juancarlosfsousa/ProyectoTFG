@@ -92,6 +92,7 @@ app.use(session({
 const userSchema = new mongoose.Schema({
 	name: {
 		type: String,
+		unique: true,
 		required: true
 	},
 	email: {
@@ -106,7 +107,14 @@ const userSchema = new mongoose.Schema({
 	roles: {
 		type: [String],
 		default: ['usuario']
-	}
+	},
+	profileImage: {
+    type: String
+  },
+	color: {
+    type: String,
+    default: '#8c72cc' // Color de borde predeterminado
+  }
 });
 
 const User = mongoose.model('User', userSchema);
@@ -120,9 +128,11 @@ app.use(async function (req, res, next) {
 		const users = db.collection('users');
 		const user = await users.findOne({ _id: userId }); //se verifica si el usuario existe en la BBDD buscando por su id.
 		res.locals.user = user; //asigna el usuario autentificado
+		res.locals.currentUser = user.name; // Agrega el nombre de usuario actual a las variables locales
 		client.close(); //se cierra la conexión con la bbdd
 	} else {
 		res.locals.user = null; //asigna como usuario autentificado null
+		res.locals.currentUser = null; // Establece el nombre de usuario actual como null cuando no está autenticado
 	}
 	next();
 })
@@ -251,11 +261,15 @@ app.post('/register', async function (req, res) {
 		}
 		const hashedPassword = await bcrypt.hash(password, 10); //con esto se crea un hash de la contraseña de valor 10 para cifrar la contraseña y que sea mucho más segura.
 
+		const defaultImageUrl = 'https://img.freepik.com/free-icon/user_318-563642.jpg';
+
 		const result = await users.insertOne({ //con esto introduciremos el nuevo usuario en la bbdd
 			name: name.toLowerCase(), //convertimos el nombre a minusculas
 			email: email,
 			password: hashedPassword, //contraseña encriptada
-			roles: ["usuario"] //rol por defecto
+			roles: ["usuario"], //rol por defecto
+			profileImage: defaultImageUrl,
+			color: '#8c72cc'
 		});
 
 		req.session.userId = result.insertedId; //se establece la ID del usuario creado.
@@ -277,9 +291,66 @@ app.get('/perfil', async function (req, res) {
 		const db = client.db('proyecto');
 		const users = db.collection('users');
 		const user = await users.findOne({ _id: userId }); //se busca al usuario correspondiente a la ID obtenida.
-		res.render('perfil', { name: user.name, email: user.email, user: user, roles: user.roles }); //se pasan todos los datos del usuario logeado para mostrarse en el perfil.
+		res.render('perfil', { userId: userId, name: user.name, email: user.email, user: user, roles: user.roles, profileImage: user.profileImage, color: user.color }); //se pasan todos los datos del usuario logeado para mostrarse en el perfil.
 		client.close(); //se cierra la conexión con la bbdd
 	}
+});
+
+app.get('/perfil/editar', function (req, res) {
+	const userId = req.session.userId;
+	if (!userId) {
+		res.redirect('/login');
+	} else {
+		User.findById(userId)
+			.then(user => {
+				res.render('editarPerfil', { user });
+			})
+			.catch(err => {
+				console.error('Error al obtener el perfil del usuario:', err);
+				res.send('Error al obtener el perfil del usuario');
+			});
+	}
+});
+
+app.post('/perfil', async function (req, res) {
+  const userId = req.session.userId;
+  if (!userId) {
+    res.redirect('/login');
+  } else {
+    const { name, email, password, profileImage, color } = req.body;
+    try {
+      const user = await User.findById(userId);
+      user.name = name;
+      user.email = email;
+      if (password) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        user.password = hashedPassword;
+      }
+      user.profileImage = profileImage; // Asignar la URL de la imagen de perfil
+			user.color = color;
+      await user.save();
+      res.redirect('/perfil');
+    } catch (error) {
+      console.error('Error al guardar los cambios del perfil:', error);
+      res.send('Error al guardar los cambios del perfil');
+    }
+  }
+});
+
+app.get('/perfil/:nombreUsuario', async function (req, res) {
+  const nombreUsuario = req.params.nombreUsuario; // Obtener el nombre de usuario desde la URL
+  try {
+    const user = await User.findOne({ name: nombreUsuario }); // Buscar al usuario por su nombre
+    if (user) {
+      res.render('perfil', { user: user, userId: req.session.userId }); // Pasar el usuario encontrado a la vista
+    } else {
+      res.status(404).send('Usuario no encontrado');
+    }
+
+  } catch (error) {
+    console.error('Error al obtener el perfil del usuario:', error);
+    res.send('Error al obtener el perfil del usuario');
+  }
 });
 
 //En este controlador POST permitimos el cierre de la sesión de un usuario que esté autentificado.
@@ -483,7 +554,35 @@ const NoticiaSchema = new mongoose.Schema({
 	autor: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User'
-	}
+	},
+	comentarios: [
+		{
+			usuario: {
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'User',
+			},
+			nombreUsuario: String,
+			contenido: String,
+			fecha: {
+				type: Date,
+				default: Date.now,
+			},
+			respuestas: [ // Campo para almacenar las respuestas
+        {
+          usuario: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+          },
+          nombreUsuario: String,
+          contenido: String,
+          fecha: {
+            type: Date,
+            default: Date.now,
+          },
+        },
+      ],
+		},
+	],
 });
 const Noticia = mongoose.model('Noticia', NoticiaSchema);
 
@@ -576,9 +675,9 @@ app.get('/noticias/:id', (req, res) => {
 
 	Noticia.findById(noticiaId) //buscamos a la noticia por su ID
 		.populate('autor', 'name') //Obtenemos solo el nombre del autor
+		.populate('comentarios.usuario', 'name color') // Agregamos el campo "color" del usuario a los comentarios
 		.then((noticia) => {
-			res.render('fichaNoticia', { noticia }); //renderizamos la vista fichaNoticia pasando como parámetro noticia.
-		})
+			res.render('fichaNoticia', { noticia, usuario: req.session.userId ? req.session.userId : null });		})
 		.catch((error) => {
 			console.log('Error al obtener la noticia:', error);
 			res.status(500).send('Error al obtener la noticia');
@@ -590,4 +689,146 @@ app.post('/noticias/:id/borrar', checkEditorRole, async function (req, res) {  /
 	const noticiaId = req.params.id; //Se obtiene la ID de la noticia.
 	await Noticia.findByIdAndDelete(noticiaId); //busca la noticia por ID y la elimina
 	res.redirect('/editor');
+});
+
+
+
+// Manejar la adición y respuesta de comentarios
+app.post('/noticias/:id/comentarios', async (req, res) => {
+  const noticiaId = req.params.id;
+  const comentarioId = req.body.comentarioId;
+  const contenido = req.body.contenido;
+  const userId = req.session.userId;
+
+  if (!userId) {
+    res.status(401).send('Debe iniciar sesión para comentar.');
+    return;
+  }
+
+  try {
+    const user = await User.findById(userId);
+    const noticia = await Noticia.findById(noticiaId);
+
+    if (!noticia) {
+      res.status(404).send('Noticia no encontrada.');
+      return;
+    }
+
+    if (comentarioId) {
+      const comentarioExistente = noticia.comentarios.find(
+        comentario => comentario._id.toString() === comentarioId
+      );
+
+      if (!comentarioExistente) {
+        res.status(404).send('Comentario no encontrado.');
+        return;
+      }
+
+      // Agregar la respuesta al comentario existente
+      comentarioExistente.respuestas.push({
+        usuario: user._id,
+        nombreUsuario: user.name,
+        contenido,
+        fecha: new Date()
+      });
+
+      await noticia.save();
+      res.redirect('back');
+      return; // Salir del controlador después de guardar la respuesta
+    }
+
+    // Agregar un nuevo comentario a la noticia
+    noticia.comentarios.push({
+      usuario: user._id,
+      nombreUsuario: user.name,
+      contenido,
+      fecha: new Date()
+    });
+
+    await noticia.save();
+
+    res.redirect('back');
+  } catch (error) {
+    console.error('Error al agregar o responder al comentario:', error);
+    res.status(500).send('Error al agregar o responder al comentario.');
+  }
+});
+
+
+
+// Manejar la eliminación de comentarios
+app.post('/noticias/:id/comentarios/:comentarioId/borrar', async (req, res) => {
+  const noticiaId = req.params.id;
+  const comentarioId = req.params.comentarioId;
+
+  try {
+    const noticia = await Noticia.findById(noticiaId);
+
+    if (!noticia) {
+      res.status(404).send('Noticia no encontrada.');
+      return;
+    }
+
+    // Filtrar y eliminar el comentario por su ID
+    noticia.comentarios = noticia.comentarios.filter(comentario => comentario._id.toString() !== comentarioId);
+    await noticia.save();
+
+    res.redirect('back');
+  } catch (error) {
+    console.error('Error al borrar el comentario:', error);
+    res.status(500).send('Error al borrar el comentario.');
+  }
+});
+
+// Borrar una respuesta de un comentario
+app.post('/noticias/:id/comentarios/:comentarioId/respuestas/:respuestaId/borrar', async (req, res) => {
+  const noticiaId = req.params.id;
+  const comentarioId = req.params.comentarioId;
+  const respuestaId = req.params.respuestaId;
+  const userId = req.session.userId;
+
+  if (!userId) {
+    res.status(401).send('Debe iniciar sesión para realizar esta acción.');
+    return;
+  }
+
+  try {
+    const noticia = await Noticia.findById(noticiaId);
+    if (!noticia) {
+      res.status(404).send('Noticia no encontrada.');
+      return;
+    }
+
+    const comentario = noticia.comentarios.find(
+      comentario => comentario._id.toString() === comentarioId
+    );
+    if (!comentario) {
+      res.status(404).send('Comentario no encontrado.');
+      return;
+    }
+
+    const respuesta = comentario.respuestas.find(
+      respuesta => respuesta._id.toString() === respuestaId
+    );
+    if (!respuesta) {
+      res.status(404).send('Respuesta no encontrada.');
+      return;
+    }
+
+    // Verificar si el usuario tiene permisos para borrar la respuesta
+    const user = await User.findById(userId);
+    if (!user.roles.includes('admin') && !user.roles.includes('editor') && user._id.toString() !== respuesta.usuario.toString()) {
+      res.status(403).send('No tiene permisos para borrar esta respuesta.');
+      return;
+    }
+
+    // Borrar la respuesta
+    comentario.respuestas.pull(respuesta._id);
+    await noticia.save();
+
+    res.redirect('back');
+  } catch (error) {
+    console.error('Error al borrar la respuesta:', error);
+    res.status(500).send('Error al borrar la respuesta.');
+  }
 });

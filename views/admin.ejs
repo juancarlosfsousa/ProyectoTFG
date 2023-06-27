@@ -17,7 +17,7 @@
       <% userList.forEach(function(user) { %>
         <div class="admin">
           <h2 class="name">
-            <%= user.name %>
+            <a href="/perfil/<%= user.name %>"><%= user.name %></a>
           </h2>
           <p class="email">
             Email: <%= user.email %>

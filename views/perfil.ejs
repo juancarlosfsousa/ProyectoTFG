@@ -6,45 +6,54 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
-	<title>Perfil de <%= name %>
+	<title>Perfil de <%= user.name %>
 	</title>
 	<link rel="stylesheet" href="/../public/css/main.css">
 </head>
 
 <body>
 	<%- include('../partials/header') %>
-		<div class="profile-card">
-			<h1 class="profile-name">
-				<%= name %>
+		<div class="profile-card" style="border: 3px solid <%= user.color %>;">
+			<h1 class="profile-name" style="color: <%= user.color %>">
+				<%= user.name %>
 			</h1>
 			<div class="profile-info">
-				<p class="profile-label">Nombre de usuario:</p>
-				<p class="profile-value">
-					<%= name %>
+				<img src="<%= user.profileImage %>" alt="Foto" style="border: 1px solid <%= user.color %>">
+			</div>
+			<div class="profile-info">
+				<p class="profile-label" style="color: <%= user.color %>">Nombre de usuario:</p>
+				<p class="profile-value" >
+					<%= user.name %>
 				</p>
 			</div>
 			<div class="profile-info">
-				<p class="profile-label">Email:</p>
+				<p class="profile-label" style="color: <%= user.color %>">Email:</p>
 				<p class="profile-value">
-					<%= email %>
+					<%= user.email %>
 				</p>
 			</div>
 			<div class="profile-info">
-				<p class="profile-label">Rol(es):</p>
+				<p class="profile-label" style="color: <%= user.color %>">Rol(es):</p>
 				<p class="profile-value">
-					<%= roles %>
+					<%= user.roles %>
 				</p>
 			</div>
+			<% if (user && userId && user._id.toString() === userId.toString()) { %>
 			<div class="cambio-tema">
 				<button id="modo-oscuro-toggle" class="tema-btn">
 					<i class="fas fa-moon"></i>
 				</button>
+				<button class="editperfil" onclick="window.location.href = '/perfil/editar';">
+					<i class="fas fa-edit"></i>
+				</button>
 			</div>
+			
 			<div class="logout-button-container">
 				<form action="/logout" method="POST">
 					<button class="logout-button" type="submit">Cerrar sesión</button>
 				</form>
 			</div>
+			<% } %>
 		</div>
 </body>
 
